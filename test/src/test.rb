@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'bundler/setup'
 require 'sha3-pure-ruby'
 
 str = 'Hello WasmTime!'
