@@ -5,7 +5,7 @@ require_relative "lib/wasify/version"
 Gem::Specification.new do |spec|
   spec.name = "wasify"
   spec.version = Wasify::VERSION
-  spec.authors = ["AlawysDelta"]
+  spec.authors = ["Giovanni Borgh"]
   spec.email = ["gio96b@gmail.com"]
 
   spec.summary = "Packs and run Ruby code on wasmtime"
@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
     end
   end
   spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+  spec.executables = ["wasify"]
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem

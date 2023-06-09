@@ -1,6 +1,6 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'depget'
-require 'wasify'
+require "wasify"
 
 Wasify.pack
