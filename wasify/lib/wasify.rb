@@ -2,6 +2,7 @@
 
 require_relative 'wasify/version'
 require 'bundler'
+require 'erb'
 
 module Wasify
   def self.get_specs(deps)
@@ -68,5 +69,51 @@ module Wasify
     copy_specs
     cmd = 'wasi-vfs pack ruby.wasm --mapdir /src::./src --mapdir /usr::./3_2-wasm32-unknown-wasi-full-js/usr --mapdir /root::./root -o packed_ruby.wasm'
     system(cmd, exception: true)
+  end
+
+  def self.generate_html(scripts)
+    scripts_txt = []
+    scripts.each do |script|
+      unless script.include? '.rb'
+        puts 'Invalid args! Not generating HTML file'
+        return
+      end
+      unless File.exist?("src/#{script}")
+        puts "#{script} not found! Not generating HTML file"
+        return
+      end
+      scripts_txt.push(File.read("src/#{script}"))
+    end
+
+    template = %(
+      <html>
+      <script src="https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@latest/dist/browser.umd.js"></script>
+      <script>
+        const { DefaultRubyVM } = window["ruby-wasm-wasi"];
+        const main = async () => {
+          const response = await fetch(
+            "http://localhost:8080/packed_ruby.wasm");
+          const buffer = await response.arrayBuffer();
+          const module = await WebAssembly.compile(buffer);
+          const { vm } = await DefaultRubyVM(module);
+
+          vm.printVersion();
+          vm.eval(`
+          <%  scripts_txt.each do |script| %>
+                 <%= script %>
+          <% end %>`);
+        };
+
+      main();
+      </script>
+
+      <body></body>
+
+      </html>)
+    html = ERB.new(template).result(binding)
+    File.rename('index.html', 'index.html.bak') if File.exist?('index.html')
+    File.open('index.html', 'w+') do |f|
+      f.write html
+    end
   end
 end
