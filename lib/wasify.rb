@@ -15,7 +15,17 @@ module Wasify
       end
       spec_path_str += "/specifications/#{i.split('/', -1)[-1]}.gemspec"
       spec_path_str[0] = ''
-      spec_paths.append(spec_path_str)
+      if File.exist?(spec_path_str)
+        spec_paths.append(spec_path_str)
+      else
+        puts "#{spec_path_str} doenst exists. Specify gem path or write skip to skip specfile."
+        path = STDIN.gets.chomp
+        until File.exist?(path) or path == 'skip'
+          puts "#{path} doenst exists. Specify gem path or write skip to skip specfile."
+          path = STDIN.gets.chomp
+        end
+        spec_paths.append(path) unless path == 'skip'
+      end
     end
     spec_paths
   end
@@ -48,7 +58,13 @@ module Wasify
 
   def self.download_binary
     system('curl -LO https://github.com/ruby/ruby.wasm/releases/latest/download/ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
+  end
+
+  def self.unzip_binary
     system('tar xfz ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
+  end
+
+  def self.move_binary
     system('mv 3_2-wasm32-unknown-wasi-full-js/usr/local/bin/ruby ruby.wasm')
   end
 
@@ -62,6 +78,8 @@ module Wasify
 
   def self.pack
     download_binary unless File.exist?('ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
+    unzip_binary unless Dir.exist?('ruby-3_2-wasm32-unknown-wasi-full-js')
+    move_binary unless File.exist?('ruby.wasm')
     fix_lockfile
     copy_gemfile
     File.delete('packed_ruby.wasm') if File.exist?('packed_ruby.wasm')
@@ -82,7 +100,7 @@ module Wasify
         puts "#{script} not found! Not generating HTML file"
         return
       end
-      scripts_txt.push(File.read("src/#{script}"))
+      scripts_txt.push("require 'bundler/setup'\n" + File.read("src/#{script}"))
     end
 
     template = %(
