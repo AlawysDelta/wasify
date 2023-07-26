@@ -1,7 +1,5 @@
 # Wasify
 
-TODO: Delete this and the text below, and describe your gem
-
 Wasify is a CLI made to make running Ruby on your browser thanks to WASM, including gems without native extensions, easy! Wasify packs a new WASM binary based on the ones released by [ruby.wasm](https://github.com/ruby/ruby.wasm) thanks to [wasi-vfs](https://github.com/kateinoigakukun/wasi-vfs), to include your code and any dependency without native extensions in a single binary ready to run on your browser with the generated HTML code.
 ## Installation
 
