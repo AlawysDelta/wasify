@@ -16,10 +16,10 @@ class Wasify
           spec_paths.append(spec_path_str)
         else
           puts "#{spec_path_str} doenst exists. Specify gem path or write skip to skip specfile."
-          path = STDIN.gets.chomp
-          until File.exist?(path) or path == 'skip'
+          path = $stdin.gets.chomp
+          until File.exist?(path) || (path == 'skip')
             puts "#{path} doenst exists. Specify gem path or write skip to skip specfile."
-            path = STDIN.gets.chomp
+            path = $stdin.gets.chomp
           end
           spec_paths.append(path) unless path == 'skip'
         end
@@ -57,7 +57,11 @@ class Wasify
       raise 'Invalid entrypoint! Entrypoint must be a Ruby script' unless entrypoint.include?('.rb')
       raise 'Entrypoint does not exsist! All scripts must be in the src folder.' unless File.exist?("src/#{entrypoint}")
 
-      "require 'bundler/setup'\n#{File.read("src/#{entrypoint}")}"
+      entrypoint = entrypoint.delete_suffix('.rb')
+      <<-HTML
+        require "bundler/setup"
+        require_relative "/src/#{entrypoint}"
+      HTML
     end
   end
 end
