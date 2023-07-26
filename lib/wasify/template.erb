@@ -1,0 +1,24 @@
+
+      <html>
+      <script src="https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@latest/dist/browser.umd.js"></script>
+      <script>
+        const { DefaultRubyVM } = window["ruby-wasm-wasi"];
+        const main = async () => {
+          const response = await fetch(
+            "http://localhost:8080/packed_ruby.wasm");
+          const buffer = await response.arrayBuffer();
+          const module = await WebAssembly.compile(buffer);
+          const { vm } = await DefaultRubyVM(module);
+
+          vm.printVersion();
+          vm.eval(`
+                 <%= entrypoint_txt %>
+          `);
+        };
+
+      main();
+      </script>
+
+      <body></body>
+
+      </html>

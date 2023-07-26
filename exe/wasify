@@ -3,5 +3,7 @@
 
 require 'wasify'
 
+raise 'Wrong number of arguments! Usage: wasify entrypoint.rb' if ARGV.length != 1
+
 Wasify.pack
-Wasify.generate_html(ARGV)
+Wasify.generate_html(ARGV[0])
