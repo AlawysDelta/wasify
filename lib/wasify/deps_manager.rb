@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Wasify
+  # methods finding and copying dependecies
   class DepsManager
     def self.get_specs(deps)
       spec_paths = []

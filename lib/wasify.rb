@@ -3,7 +3,8 @@
 require_relative 'wasify/version'
 require 'bundler'
 require 'erb'
-require_relative 'requires'
+require_relative 'wasify/cmd_runner'
+require_relative 'wasify/deps_manager'
 # wrapper for Wasify
 class Wasify
   def self.pack
@@ -16,12 +17,13 @@ class Wasify
     DepsManager.copy_deps
     DepsManager.copy_specs
     CMDRunner.run_vfs
+    CMDRunner.cleanup
   end
 
   def self.generate_html(entrypoint)
     entrypoint_txt = DepsManager.add_entrypoint(entrypoint)
-    template = 'wasify/template.erb'
-    html = ERB.new(File.read(File.join(__dir__, template))).result(binding)
+    TEMPLATE = 'wasify/template.erb'
+    html = ERB.new(File.read(File.join(__dir__, TEMPLATE))).result(binding)
     File.rename('index.html', 'index.html.bak') if File.exist?('index.html')
     File.open('index.html', 'w+') do |f|
       f.write html

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Wasify
+  # methods interacting with the command line
   class CMDRunner
     def self.download_binary
       system('curl -LO https://github.com/ruby/ruby.wasm/releases/latest/download/ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
@@ -24,6 +25,13 @@ class Wasify
 
     def self.run_vfs
       system('wasi-vfs pack ruby.wasm --mapdir /src::./src --mapdir /usr::./3_2-wasm32-unknown-wasi-full-js/usr --mapdir /root::./root -o packed_ruby.wasm')
+    end
+
+    def self.cleanup
+      system('rm -rf 3_2-wasm32-unknown-wasi-full-js')
+      system('rm ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
+      system('rm ruby.wasm')
+      system('rm -rf root')
     end
   end
 end

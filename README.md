@@ -18,9 +18,8 @@ If bundler is not being used to manage dependencies, install the gem by executin
 After installing the gem and the required dependencies, your project needs to get ready to be wasified.
 Move all your Ruby script files into a *src* folder, and then call Wasify from the command line:
 
-```bash
-wasify entrypoint.rb
-```
+    $ wasify entrypoint.rb
+
 where *entrypoint.rb* is the entrypoint of your Ruby project.
 
 Wasify will generate an *index.html* file and a *packed_ruby.wasm* file. To run on your browser locally, host them on a local HTTP server (check paths and ports in the index.html file if you need to change names or if you use a different port than 8080 on your local server).
