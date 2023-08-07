@@ -17,8 +17,8 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 After installing the gem and the required dependencies, your project needs to get ready to be wasified.
 Your project's folder should include the following:
-    - The project's Gemfile
-    - a *src* folder, where all the Ruby code you need to run will be. Wasify works with multi-file projects, so you can add as many files as you want.
+* The project's Gemfile
+* a *src* folder, where all the Ruby code you need to run will be. Wasify works with multi-file projects, so you can add as many files as you want.
 
 When your project folder is ready, open it with your favourite terminal and call
 
