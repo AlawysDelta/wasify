@@ -4,23 +4,19 @@ class Wasify
   # methods finding and copying dependecies
   class DepsManager
     def self.get_specs(deps)
+      bundler_specs = Bundler.load.specs
+      lf = bundler_specs.map(&:loaded_from)
+      lf.select! { |item| !item.include?("/bundler-") && !item.include?("/wasify-") }
+
       spec_paths = []
-      deps.each do |i|
-        spec_path_str = ''
-        spec_path = i.split('/', -1)
-        spec_path.each_with_index do |s, index|
-          spec_path_str += "/#{s}" if index < spec_path.length - 2
-        end
-        spec_path_str += "/specifications/#{i.split('/', -1)[-1]}.gemspec"
-        spec_path_str[0] = ''
+      lf.each do |spec_path_str|
         if File.exist?(spec_path_str)
           spec_paths.append(spec_path_str)
         else
-          puts "#{spec_path_str} doenst exists. Specify gem path or write skip to skip specfile."
-          path = $stdin.gets.chomp
-          until File.exist?(path) || (path == 'skip')
-            puts "#{path} doenst exists. Specify gem path or write skip to skip specfile."
+          loop do
+            puts "#{spec_path_str} doesn't exist. Specify gemspec path or write 'skip' to skip specfile."
             path = $stdin.gets.chomp
+            break if File.exist?(path) || (path == 'skip')
           end
           spec_paths.append(path) unless path == 'skip'
         end
