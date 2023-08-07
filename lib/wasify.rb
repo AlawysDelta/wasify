@@ -22,8 +22,8 @@ class Wasify
 
   def self.generate_html(entrypoint)
     entrypoint_txt = DepsManager.add_entrypoint(entrypoint)
-    TEMPLATE = 'wasify/template.erb'
-    html = ERB.new(File.read(File.join(__dir__, TEMPLATE))).result(binding)
+    template = 'wasify/template.erb'
+    html = ERB.new(File.read(File.join(__dir__, template))).result(binding)
     File.rename('index.html', 'index.html.bak') if File.exist?('index.html')
     File.open('index.html', 'w+') do |f|
       f.write html
