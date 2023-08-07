@@ -17,7 +17,7 @@ class Wasify
     end
 
     def self.copy_gemfile
-      system('mkdir -p root && cp -r Gemfile root/Gemfile && cp -r Gemfile.lock root/Gemfile.lock')
+      system('mkdir -p deps && cp -r Gemfile deps/Gemfile && cp -r Gemfile.lock deps/Gemfile.lock')
     end
 
     def self.fix_lockfile
@@ -25,14 +25,14 @@ class Wasify
     end
 
     def self.run_vfs
-      system('wasi-vfs pack ruby.wasm --mapdir /src::./src --mapdir /usr::./3_2-wasm32-unknown-wasi-full-js/usr --mapdir /root::./root -o packed_ruby.wasm')
+      system('wasi-vfs pack ruby.wasm --mapdir /src::./src --mapdir /usr::./3_2-wasm32-unknown-wasi-full-js/usr --mapdir /deps::./deps -o packed_ruby.wasm')
     end
 
     def self.cleanup
       system('rm -rf 3_2-wasm32-unknown-wasi-full-js')
       system('rm ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
       system('rm ruby.wasm')
-      system('rm -rf root')
+      system('rm -rf deps')
     end
   end
 end
