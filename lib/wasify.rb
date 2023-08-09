@@ -7,7 +7,7 @@ require_relative 'wasify/cmd_runner'
 require_relative 'wasify/deps_manager'
 # wrapper for Wasify
 class Wasify
-  def self.pack
+  def self.prepack
     CMDRunner.download_binary unless File.exist?('ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
     CMDRunner.unzip_binary unless Dir.exist?('ruby-3_2-wasm32-unknown-wasi-full-js')
     CMDRunner.move_binary unless File.exist?('ruby.wasm')
@@ -16,8 +16,20 @@ class Wasify
     File.delete('packed_ruby.wasm') if File.exist?('packed_ruby.wasm')
     DepsManager.copy_deps
     DepsManager.copy_specs
+  end
+
+  def self.build_wasm
     CMDRunner.run_vfs
+  end
+
+  def self.cleanup
     CMDRunner.cleanup
+  end
+
+  def self.pack
+    prepack
+    build_wasm
+    cleanup
   end
 
   def self.generate_html(entrypoint)

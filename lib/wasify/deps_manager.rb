@@ -51,8 +51,10 @@ class Wasify
     end
 
     def self.add_entrypoint(entrypoint)
+      entrypoint = entrypoint[4..-1] if entrypoint.start_with?("src/") && !File.exist?("src/#{entrypoint}")
+
       raise 'Invalid entrypoint! Entrypoint must be a Ruby script' unless entrypoint.include?('.rb')
-      raise 'Entrypoint does not exsist! All scripts must be in the src folder.' unless File.exist?("src/#{entrypoint}")
+      raise 'Entrypoint does not exist! All scripts must be in the src folder.' unless File.exist?("src/#{entrypoint}")
 
       entrypoint = entrypoint.delete_suffix('.rb')
       <<-HTML
