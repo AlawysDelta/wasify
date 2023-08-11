@@ -37,7 +37,7 @@ class Wasify
       # But also, Bundler has multiple kinds of specs. Installed baked specs often omit the file list
       # or cut it down to just executables and top-level README-type files. So we have to do things
       # differently for installed and non-installed specs :-(
-      specs = Bundler.load.specs.to_a
+      specs = Bundler.load.requested_specs.to_a
       specs.each do |spec|
         root_path = File.expand_path spec.full_gem_path # Pretty sure the expand is unneeded
 
