@@ -1,52 +1,91 @@
 # frozen_string_literal: true
 
+require "fileutils"
+
 class Wasify
   # methods finding and copying dependecies
   class DepsManager
     def self.get_specs(deps)
-      bundler_specs = Bundler.load.specs
-      lf = bundler_specs.map(&:loaded_from)
-      lf.select! { |item| !item.include?("/bundler-") && !item.include?("/wasify-") }
+      # Bundler internals are annoying to look through. And mostly undocumented.
+      # It's amazing what you can find via "bundle exec irb" and then "Bundler.load".
+      bundler_specs = Bundler.load.requested_specs.to_a
 
-      spec_paths = []
-      lf.each do |spec_path_str|
-        if File.exist?(spec_path_str)
-          spec_paths.append(spec_path_str)
-        else
-          loop do
-            puts "#{spec_path_str} doesn't exist. Specify gemspec path or write 'skip' to skip specfile."
-            path = $stdin.gets.chomp
-            break if File.exist?(path) || (path == 'skip')
-          end
-          spec_paths.append(path) unless path == 'skip'
-        end
+      # By default, Bundler only "installs" git: gems and path: gems partway.
+      # The specification remains dynamic. So if you require "lib/scarpe/version"
+      # in the gemspec, it breaks when vendored, because the specification is
+      # separated from the gem source (like lib/scarpe/version.rb). When
+      # a gem is built and installed, the gemspec is "baked" to a static version,
+      # either Ruby or YAML. But git: and path: gems don't do that. So we
+      # need to bake them ourselves using spec.to_ruby.
+      # (Thanks to Benedikt Deicke, who pointed out to_ruby.)
+
+      spec_contents = {}
+      bundler_specs.each do |spec|
+        next if ["bundler", "wasify"].include?(spec.name)
+
+        spec_contents["#{spec.full_name}.gemspec"] = spec.to_ruby
       end
-      spec_paths
+      spec_contents
     end
 
     def self.get_deps
-      deps = Bundler.load.specs.map(&:full_gem_path)
-      modded_string_deps = []
-      deps.each do |i|
-        modded_string_deps.append(i)
+      return @all_gems if @all_gems
+
+      @all_gems = {}
+
+      # We don't want to copy random files (e.g. .git directories, .bundle) in a path: or git: gem dir.
+      # But also, Bundler has multiple kinds of specs. Installed baked specs often omit the file list
+      # or cut it down to just executables and top-level README-type files. So we have to do things
+      # differently for installed and non-installed specs :-(
+      specs = Bundler.load.requested_specs.to_a
+      specs.each do |spec|
+        root_path = File.expand_path spec.full_gem_path # Pretty sure the expand is unneeded
+
+        files = case spec
+        when Gem::Specification
+          #puts "#{spec.full_name} is a git: or path: gem"
+          spec.files
+        when Bundler::StubSpecification
+          # The specification file is wrong, but there should be only the right files already installed...
+          #puts "#{spec.full_name} is locally installed"
+          files = :all
+        else
+          raise "Not implemented! Figure out how to get Bundler data from a #{spec.class}!"
+        end
+
+        @all_gems[spec.full_name] = {
+          root: root_path,
+          files: files,
+        }
       end
-      modded_string_deps
+
+      @all_gems
     end
 
     def self.copy_deps
-      deps = get_deps
-      deps.each do |i|
-        status = system("cp -r #{i} ./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/gems")
-        puts "Gem at #{i} not copied." unless status
+      get_deps.each do |gem_name, dep|
+        dest_dir = "./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/gems/#{gem_name}"
+        if dep[:files] == :all
+          FileUtils.cp_r dep[:root], dest_dir
+        elsif dep[:files].respond_to?(:each)
+          dep[:files].each do |file|
+            src = "#{dep[:root]}/#{file}"
+            dest = "#{dest_dir}/#{file}"
+            FileUtils.mkdir_p File.dirname(dest)
+            #STDERR.puts "cp: #{src.inspect} #{dest.inspect}"
+            FileUtils.cp src, dest
+          end
+        else
+          raise "Unexpected file list object!"
+        end
       end
     end
 
     def self.copy_specs
       deps = get_deps
       specs = get_specs(deps)
-      specs.each do |s|
-        status = system("cp #{s} ./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/specifications")
-        puts "Specification at #{s} not copied." unless status
+      specs.each do |name, contents|
+        File.write("./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/specifications/#{name}", contents)
       end
     end
 
