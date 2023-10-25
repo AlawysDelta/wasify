@@ -5,7 +5,10 @@ require 'wasify'
 
 raise 'Wrong number of arguments! Usage: wasify entrypoint.rb' if ARGV.length != 1
 
-if ARGV[0] == 'prepack'
+if ARGV[0] == "-v"
+  require "wasify/version"
+  puts "Wasify version #{Wasify::VERSION}"
+elsif ARGV[0] == 'prepack'
   Wasify.prepack
 else
   Wasify.pack
