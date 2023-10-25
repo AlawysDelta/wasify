@@ -84,6 +84,7 @@ class Wasify
     def self.copy_specs
       deps = get_deps
       specs = get_specs(deps)
+      FileUtils.mkdir_p "./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/specifications/"
       specs.each do |name, contents|
         File.write("./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/specifications/#{name}", contents)
       end

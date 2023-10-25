@@ -9,7 +9,7 @@ class Wasify
 
     def self.unzip_binary
       system('tar xfz ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
-      system('chmod u+rw 3_2-wasm32-unknown-wasi-full-js')
+      system('chmod -R u+rw 3_2-wasm32-unknown-wasi-full-js')
     end
 
     def self.move_binary
