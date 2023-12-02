@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['Giovanni Borgh']
   spec.email = ['gio96b@gmail.com']
 
-  spec.summary = 'Packs and run Ruby code on WASM'
+  spec.summary = 'Packs and runs Ruby code on WASM'
   spec.license = 'MIT'
   spec.homepage = 'https://github.com/AlawysDelta/wasify'
   spec.required_ruby_version = '>= 3.2.0'
