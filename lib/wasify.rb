@@ -8,8 +8,8 @@ require_relative 'wasify/deps_manager'
 # wrapper for Wasify
 class Wasify
   def self.prepack
-    CMDRunner.download_binary unless File.exist?('ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
-    CMDRunner.unzip_binary unless Dir.exist?('ruby-3_2-wasm32-unknown-wasi-full-js')
+    CMDRunner.download_binary unless File.exist?('ruby-3.2-wasm32-unknown-wasi-full-js.tar.gz')
+    CMDRunner.unzip_binary unless Dir.exist?('ruby-3.2-wasm32-unknown-wasi-full-js')
     CMDRunner.move_binary unless File.exist?('ruby.wasm')
     CMDRunner.fix_lockfile
     CMDRunner.copy_gemfile
