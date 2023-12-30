@@ -64,7 +64,7 @@ class Wasify
 
     def self.copy_deps
       get_deps.each do |gem_name, dep|
-        dest_dir = "./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/gems/#{gem_name}"
+        dest_dir = "./#{Wasify.dir_filename}/usr/local/lib/ruby/gems/#{Wasify.gems_ruby_version}/gems/#{gem_name}"
         if dep[:files] == :all
           FileUtils.cp_r dep[:root], dest_dir
         elsif dep[:files].respond_to?(:each)
@@ -84,9 +84,9 @@ class Wasify
     def self.copy_specs
       deps = get_deps
       specs = get_specs(deps)
-      FileUtils.mkdir_p "./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/specifications/"
+      FileUtils.mkdir_p "./#{Wasify.dir_filename}/usr/local/lib/ruby/gems/#{Wasify.gems_ruby_version}/specifications/"
       specs.each do |name, contents|
-        File.write("./3_2-wasm32-unknown-wasi-full-js/usr/local/lib/ruby/gems/3.2.0/specifications/#{name}", contents)
+        File.write("./#{Wasify.dir_filename}/usr/local/lib/ruby/gems/#{Wasify.gems_ruby_version}/specifications/#{name}", contents)
       end
     end
 
