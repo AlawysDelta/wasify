@@ -34,6 +34,7 @@ class Wasify
 
   def self.generate_html(entrypoint)
     entrypoint_txt = DepsManager.add_entrypoint(entrypoint)
+    wasm_wasi_version = ENV["WASIFY_VERSION"] || "2.3.0"
     template = 'wasify/template.erb'
     html = ERB.new(File.read(File.join(__dir__, template))).result(binding)
     File.rename('index.html', 'index.html.bak') if File.exist?('index.html')

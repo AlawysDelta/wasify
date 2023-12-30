@@ -4,7 +4,8 @@ class Wasify
   # methods interacting with the command line
   class CMDRunner
     def self.download_binary
-      system('curl -LO https://github.com/ruby/ruby.wasm/releases/latest/download/ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz')
+      version = ENV["WASIFY_VERSION"] || "2.3.0"
+      system("curl -LO https://github.com/ruby/ruby.wasm/releases/download/#{version}/ruby-3_2-wasm32-unknown-wasi-full-js.tar.gz")
     end
 
     def self.unzip_binary

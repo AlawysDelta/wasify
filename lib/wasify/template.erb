@@ -1,6 +1,6 @@
 
       <html>
-      <script src="https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@latest/dist/browser.umd.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@<%= wasm_wasi_version || "latest" %>/dist/browser.umd.js"></script>
       <script>
         const { DefaultRubyVM } = window["ruby-wasm-wasi"];
         const main = async () => {
