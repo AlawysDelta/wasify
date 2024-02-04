@@ -12,7 +12,7 @@ class Wasify
   DEFAULT_RUBY_VERSION = "3.3"
 
   # Anything before 2.1.0 doesn't have a browser.umd.js in CDN
-  RUBY_WASM_VERSIONS = [ "2.1.0", "2.2.0", "2.3.0", "2.4.0", "2.4.1" ]
+  #RUBY_WASM_VERSIONS = [ "2.1.0", "2.2.0", "2.3.0", "2.4.0", "2.4.1" ]
 
   def self.download_filename
     return @ruby_wasm_filename if @ruby_wasm_filename
@@ -58,15 +58,11 @@ class Wasify
     end
   end
 
-  # This is the version of ruby/ruby.wasm being used - only allowed versions,
-  # where we can download the release and use the JS CDN.
+  # This is the version of ruby/ruby.wasm being used
   def self.wasi_version
     return @wasi_version if @wasi_version
 
     @wasi_version = ENV["WS_RUBY_WASM_VERSION"] || DEFAULT_WASM_VERSION
-    unless RUBY_WASM_VERSIONS.include?(@wasi_version)
-      raise("Error! Expected WS_RUBY_WASM_VERSION to be one of: #{RUBY_WASM_VERSIONS.inspect}!")
-    end
 
     @wasi_version
   end
