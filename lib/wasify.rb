@@ -8,7 +8,7 @@ require_relative 'wasify/deps_manager'
 
 # wrapper for Wasify
 class Wasify
-  DEFAULT_WASM_VERSION = "2.4.1"
+  DEFAULT_WASM_VERSION = "2.5.0"
   DEFAULT_RUBY_VERSION = "3.3"
 
   # Anything before 2.1.0 doesn't have a browser.umd.js in CDN
